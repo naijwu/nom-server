@@ -32,7 +32,7 @@ export const searchNearbyPlaces = async (requestData: PlacesRequest) => {
   const headers = {
     'Content-Type': 'application/json',
     'X-Goog-Api-Key': API_KEY,
-    'X-Goog-FieldMask': 'places.displayName, places.id',
+    'X-Goog-FieldMask': 'places.displayName,places.id',
   };
 
   const body = {
