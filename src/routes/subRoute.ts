@@ -3,7 +3,6 @@ import { webpush } from '..';
 const router = express.Router();
 import { getUserData } from '../helpers/firebase';
 
-
 router.get('/test/:uid', async (req: Request, res: Response) => {
   const { uid } = req.params;
   try {
