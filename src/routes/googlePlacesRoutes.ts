@@ -1,7 +1,9 @@
-import { Router, Request, Response } from 'express';
-import { searchNearbyPlaces } from '../helpers/googlePlacesHelpers';
+import express, { Router, Request, Response } from 'express';
+import { searchNearbyPlaces } from '../helpers/googlePlaces';
 
 const router = Router();
+
+router.use(express.json());
 
 router.post('/search-nearby', async (req: Request, res: Response) => {
   const requestData = req.body;

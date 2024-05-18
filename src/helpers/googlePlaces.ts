@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const API_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
-const BASE_URL = 'https://places.googleapis.com/v1/places:searchNearby';
 
 interface Location {
   latitude: number;
@@ -21,7 +20,7 @@ interface PlacesRequest {
 }
 
 export const searchNearbyPlaces = async (requestData: PlacesRequest) => {
-  const url = BASE_URL;
+  const url = 'https://places.googleapis.com/v1/places:searchNearby';
 
   const headers = {
     'Content-Type': 'application/json',
