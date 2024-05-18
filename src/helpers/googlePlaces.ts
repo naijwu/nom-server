@@ -32,7 +32,7 @@ export const searchNearbyPlaces = async (requestData: PlacesRequest) => {
   const headers = {
     'Content-Type': 'application/json',
     'X-Goog-Api-Key': API_KEY,
-    'X-Goog-FieldMask': 'places.displayName',
+    'X-Goog-FieldMask': 'places.displayName, places.id',
   };
 
   const body = {
@@ -76,7 +76,7 @@ export const textSearchPlaces = async (requestData: TextSearchRequest) => {
     'Content-Type': 'application/json',
     'X-Goog-Api-Key': API_KEY,
     'X-Goog-FieldMask':
-      'places.displayName,places.formattedAddress,places.priceLevel,places.nationalPhoneNumber,places.rating,places.types',
+      'places.displayName,places.formattedAddress,places.priceLevel,places.nationalPhoneNumber,places.rating,places.types,places.id',
   };
 
   const { center, radius, ...restRequestData } = requestData;
