@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { priceLevels } from './googlePlaces';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8zILnvpC6YaXhKoHNLzZATBUs2Nc-6_A',
@@ -29,7 +28,7 @@ export async function getUserData(uid: string) {
 export async function getUserPreferences(userIds: string[]): Promise<string[]> {
   const userDataPromises = userIds.map(async (userId) => {
     const userData = await getUserData(userId);
-    return userData?.foods || [];
+    return userData?.favourites || [];
   });
 
   const userDataArrays = await Promise.all(userDataPromises);
