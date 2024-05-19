@@ -7,7 +7,7 @@ export const sendGroupNotifications = async (userSubscriptions: any[], visitId: 
       const payload = JSON.stringify({
         type: '',
         title: 'Hello!',
-        body: `Vote for visit ${visitId}`,
+        body: `Vote for today's restaurant!`,
         visitId,
       });
 
