@@ -68,9 +68,8 @@ const processPlacesResponse = async (response: Response) => {
         };
       })
     );
+    data.places = data.places.filter((place: any) => place.priceLevel !== -1);
   }
-
-  data.places = data.places.filter((place: any) => place.priceLevel !== -1);
 
   return data;
 };

@@ -62,8 +62,6 @@ export function getFoodRecommendations(numUsers: number, foods: string[]): strin
     }
   }
 
-  console.log(lowBucket, midBucket, highBucket);
-
   if (highBucket.length >= 2) {
     recommendations.push(...getRandomItems(highBucket, 2));
   } else {
