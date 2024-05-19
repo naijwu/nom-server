@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from 'express';
-import { searchNearbyPlaces, textSearchPlaces } from '../helpers/googlePlaces';
+import { searchNearbyPlaces, textSearchPlaces, fetchPlaceMedia } from '../helpers/googlePlaces';
 
 const router = Router();
 
@@ -22,6 +22,83 @@ router.post('/text-search', async (req: Request, res: Response) => {
     res.json(data);
   } catch (error) {
     res.status(500).send('Failed to search nearby places');
+  }
+});
+
+router.get('/recommendations', async (req: Request, res: Response) => {
+  const { cuisines, center, radius } = req.body;
+
+  if (!Array.isArray(cuisines) || cuisines.length === 0) {
+    return res.status(400).send('Cuisines array is required.');
+  }
+
+  if (!center || !('latitude' in center) || !('longitude' in center)) {
+    return res
+      .status(400)
+      .send('Center location is required and should include latitude and longitude.');
+  }
+
+  if (!radius) {
+    return res.status(400).send('Radius is required.');
+  }
+
+  try {
+    const searchPromises = cuisines.map((cuisine) => {
+      const requestData = {
+        textQuery: `${cuisine} restaurant`,
+        center: { latitude: center.latitude, longitude: center.longitude },
+        radius: radius,
+      };
+      return textSearchPlaces(requestData);
+    });
+
+    const responses = await Promise.all(searchPromises);
+
+    const results: any[] = [];
+    let hasMoreResults = true;
+    let index = 0;
+
+    const getRandomPlace = (places: any[]) => {
+      return places[Math.floor(Math.random() * places.length)];
+    };
+
+    while (results.length < 3 && hasMoreResults) {
+      hasMoreResults = false;
+      for (const response of responses) {
+        if (response.places && response.places.length > index) {
+          results.push(getRandomPlace(response.places));
+          hasMoreResults = true;
+        }
+        if (results.length >= 3) break;
+      }
+      index++;
+    }
+
+    if (results.length < 3) {
+      const fallbackRequestData = {
+        textQuery: 'restaurant',
+        center: { latitude: center.latitude, longitude: center.longitude },
+        radius: radius,
+      };
+      const fallbackResponse = await textSearchPlaces(fallbackRequestData);
+      if (fallbackResponse.places) {
+        for (const place of fallbackResponse.places) {
+          if (results.length < 3) {
+            results.push(place);
+          }
+        }
+      }
+    }
+
+    for (const place of results) {
+      if (place.photo) {
+        place.photo = await fetchPlaceMedia(place.photo);
+      }
+    }
+
+    res.json(results);
+  } catch (error) {
+    res.status(500).send('Failed to get recommendations');
   }
 });
 
