@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getGeocodingData, extractFormattedAddresses } from '../helpers/geocode';
+import { getGeocodingData, extractFormattedAddresses, getCoordinates } from '../helpers/geocode';
 
 const router = express.Router();
 
@@ -15,6 +15,17 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     res.json({ address: firstAddress });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch geocoding data' });
+  }
+});
+
+router.get('/coordinates', async (req: Request, res: Response) => {
+  try {
+    const { address } = req.body;
+    const coordinates = await getCoordinates(address);
+
+    res.json(coordinates);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch geocoding data' });
   }
