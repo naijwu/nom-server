@@ -8,7 +8,7 @@ import {
   collection,
   where,
   getDocs,
-  setDoc
+  setDoc,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -38,7 +38,7 @@ interface Visit {
   users: string[];
   voteBy: string;
   statusCode: 0 | 1 | 2;
-  groupUsers: string [];
+  groupUsers: string[];
 }
 
 const app = initializeApp(firebaseConfig);
@@ -116,10 +116,15 @@ export async function setVisit(id: string, visitData: Partial<Visit>) {
     console.log('Visit document successfully updated with ID: ', id);
   } catch (error) {
     console.error('Error updating visit document: ', error);
+    throw error; // Rethrow error to be caught by the calling function
   }
 }
 
-export async function addRestaurantsToVisits(groupId: string, results: any[], groupUsers: string[]) {
+export async function addRestaurantsToVisits(
+  groupId: string,
+  results: any[],
+  groupUsers: string[]
+) {
   const options: Option[] = results.map((restaurant) => ({
     images: restaurant.photos,
     name: restaurant.displayName,
@@ -140,7 +145,7 @@ export async function addRestaurantsToVisits(groupId: string, results: any[], gr
     users: [],
     voteBy: voteBy.toISOString(),
     statusCode: 0,
-    groupUsers
+    groupUsers,
   };
 
   try {
