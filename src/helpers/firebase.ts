@@ -37,7 +37,7 @@ interface Visit {
   options: Option[];
   users: string[];
   voteBy: string;
-  statusCode: 0 | 1 | 2;
+  statusCode: 0 | 1 | 2 | 3;
   groupUsers: string[];
 }
 

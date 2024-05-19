@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { getSubscriptionObjects, getVisit, setVisit } from '../helpers/firebase';
-import { sendGroupNotifications } from '../helpers/notification';
+import { sendGroupNotifications, sendGroupNotificationsSuccess } from '../helpers/notification';
 
 const router = express.Router();
 
@@ -17,12 +17,17 @@ router.post('/:visitId', async (req: Request, res: Response) => {
 
     await setVisit(visitId, {
       ...visitData,
-      statusCode: 2,
+      statusCode: 3,
     });
     const userSubscriptions: any = await getSubscriptionObjects(visitData.groupId);
 
     // send push to all in the group
-    await sendGroupNotifications(userSubscriptions, visitId);
+    await sendGroupNotificationsSuccess(userSubscriptions, visitId, {
+      type: 'booked',
+      title: 'Hello!',
+      body: `Reservations have been made at ${visitData?.bookedRestaurant?.name || 'your restaurant'}`,
+      visitId,
+    });
 
     res.json({ message: 'Visit status updated.' });
   } catch (error) {
