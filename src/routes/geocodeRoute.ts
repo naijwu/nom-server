@@ -3,7 +3,7 @@ import { getGeocodingData, extractFormattedAddresses, getCoordinates } from '../
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const requestData = req.body;
     const geocodingResponse = await getGeocodingData(requestData);
@@ -20,7 +20,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/coordinates', async (req: Request, res: Response) => {
+router.post('/coordinates', async (req: Request, res: Response) => {
   try {
     const { address } = req.body;
     const coordinates = await getCoordinates(address);

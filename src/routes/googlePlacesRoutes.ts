@@ -26,7 +26,7 @@ router.post('/text-search', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/recommendations', async (req: Request, res: Response) => {
+router.post('/recommendations', async (req: Request, res: Response) => {
   const { users, center, radius } = req.body;
 
   const foodPreferences = await getUserPreferences(users).then((foods) => {

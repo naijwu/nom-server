@@ -6,7 +6,7 @@ const router = Router();
 
 router.use(express.json());
 
-router.get('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   const { users, center, radius } = req.body;
 
   const foodPreferences = await getUserPreferences(users).then((foods) => {
