@@ -38,6 +38,7 @@ interface Visit {
   users: string[];
   voteBy: string;
   statusCode: 0 | 1 | 2;
+  groupUsers: string [];
 }
 
 const app = initializeApp(firebaseConfig);
@@ -118,7 +119,7 @@ export async function setVisit(id: string, visitData: Partial<Visit>) {
   }
 }
 
-export async function addRestaurantsToVisits(groupId: string, results: any[]) {
+export async function addRestaurantsToVisits(groupId: string, results: any[], groupUsers: string[]) {
   const options: Option[] = results.map((restaurant) => ({
     images: restaurant.photos,
     name: restaurant.displayName,
@@ -139,6 +140,7 @@ export async function addRestaurantsToVisits(groupId: string, results: any[]) {
     users: [],
     voteBy: voteBy.toISOString(),
     statusCode: 0,
+    groupUsers
   };
 
   try {

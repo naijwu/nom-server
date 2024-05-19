@@ -88,7 +88,7 @@ router.post('/', async (req: Request, res: Response) => {
       }
     }
 
-    const visitId = await addRestaurantsToVisits(groupId, results);
+    const visitId = await addRestaurantsToVisits(groupId, results, users);
 
     const userSubscriptions: any = await getSubscriptionObjects(groupId);
     await sendGroupNotifications(userSubscriptions, visitId);
