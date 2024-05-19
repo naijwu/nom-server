@@ -59,7 +59,7 @@ async function emailsToUids(emails: string[]) {
   const listOfSubData: any = [];
   
   for (let i = 0; i < emails.length; i++) {
-    const q = query(collection(db, "users"), where("email", "==", emails[0]));
+    const q = query(collection(db, "users"), where("email", "==", emails[i]));
   
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
