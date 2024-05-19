@@ -59,7 +59,7 @@ export const getCoordinates = async (address: string) => {
 
     const data = await response.json();
 
-    return data.results[0].geometry.location
+    return data.results[0]?.geometry.location
   } catch (error) {
     console.error('Error in getCoordinatesData:', error);
     throw new Error('Failed to fetch coordinates data');
