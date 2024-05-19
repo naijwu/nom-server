@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { sendGroupNotifications } from '../helpers/notification';
 import { webpush } from '..';
 const router = express.Router();
 import { getSubscriptionObjects, getUserData } from '../helpers/firebase';
@@ -10,18 +11,7 @@ router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
     const userSubscriptions: any = await getSubscriptionObjects(group_id);
 
     // send push to all in the group
-    for (let i = 0; i < userSubscriptions?.length; i++) {
-      const subData = JSON.parse(userSubscriptions[i]);
-      const payload = JSON.stringify({
-        type: '',
-        title: 'Hello!',
-        body: 'You have a new notification.',
-      });
-      webpush
-        .sendNotification(subData, payload)
-        .then((res: any) => console.log('Notification sent:', res))
-        .catch((err: any) => console.error('Error sending notification:', err));
-    }
+    // await sendGroupNotifications(userSubscriptions);
 
     return res.status(200);
   } catch (error) {

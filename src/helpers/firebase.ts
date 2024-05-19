@@ -1,5 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, query, getFirestore, addDoc, collection, where, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  query,
+  getFirestore,
+  addDoc,
+  collection,
+  where,
+  getDocs,
+  setDoc
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8zILnvpC6YaXhKoHNLzZATBUs2Nc-6_A',
@@ -26,6 +36,8 @@ interface Visit {
   groupId: string;
   options: Option[];
   users: string[];
+  voteBy: string;
+  statusCode: 0 | 1 | 2;
 }
 
 const app = initializeApp(firebaseConfig);
@@ -54,13 +66,12 @@ export async function getUserPreferences(userIds: string[]): Promise<string[]> {
   return allFoods;
 }
 
-
 async function emailsToUids(emails: string[]) {
   const listOfSubData: any = [];
-  
+
   for (let i = 0; i < emails.length; i++) {
-    const q = query(collection(db, "users"), where("email", "==", emails[i]));
-  
+    const q = query(collection(db, 'users'), where('email', '==', emails[i]));
+
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       const user = doc.data();
@@ -69,7 +80,6 @@ async function emailsToUids(emails: string[]) {
   }
 
   return listOfSubData;
-
 }
 
 export async function getSubscriptionObjects(id: string) {
@@ -77,13 +87,35 @@ export async function getSubscriptionObjects(id: string) {
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     const group = docSnap.data();
-    
+
     const listOfEmails = group.users?.map((u: any) => u.email); // contains list of emails
     const listOfSubData = await emailsToUids(listOfEmails);
-    
+
     return listOfSubData;
   }
   return [];
+}
+
+export async function getVisit(id: string) {
+  const docRef = doc(db, 'visits', id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    return null;
+  }
+}
+
+export async function setVisit(id: string, visitData: Partial<Visit>) {
+  const docRef = doc(db, 'visits', id);
+
+  try {
+    await setDoc(docRef, visitData, { merge: true });
+    console.log('Visit document successfully updated with ID: ', id);
+  } catch (error) {
+    console.error('Error updating visit document: ', error);
+  }
 }
 
 export async function addRestaurantsToVisits(groupId: string, results: any[]) {
@@ -97,18 +129,21 @@ export async function addRestaurantsToVisits(groupId: string, results: any[]) {
     description: restaurant?.editorialSummary || '',
   }));
 
+  let voteBy = new Date();
+  voteBy.setMinutes(voteBy.getMinutes() + 15);
+
   const visitData: Visit = {
     date: new Date().toISOString(),
     groupId,
     options,
     users: [],
+    voteBy: voteBy.toISOString(),
+    statusCode: 0,
   };
-
-  console.log(visitData);
 
   try {
     const docRef = await addDoc(collection(db, 'visits'), visitData);
-    console.log('Visit document successfully created with ID: ', docRef.id);
+    return docRef.id;
   } catch (error) {
     console.error('Error creating visit document: ', error);
   }

@@ -1,6 +1,12 @@
 import express, { Router, Request, Response } from 'express';
 import { textSearchPlaces, fetchPlaceMedia } from '../helpers/googlePlaces';
-import { getUserPreferences, getFoodRecommendations, addRestaurantsToVisits } from '../helpers/firebase';
+import {
+  getUserPreferences,
+  getFoodRecommendations,
+  addRestaurantsToVisits,
+  getSubscriptionObjects,
+} from '../helpers/firebase';
+import { sendGroupNotifications } from '../helpers/notification';
 
 const router = Router();
 
@@ -82,7 +88,10 @@ router.post('/', async (req: Request, res: Response) => {
       }
     }
 
-    await addRestaurantsToVisits(groupId, results);
+    const visitId = await addRestaurantsToVisits(groupId, results);
+
+    const userSubscriptions: any = await getSubscriptionObjects(groupId);
+    await sendGroupNotifications(userSubscriptions, visitId);
 
     res.json(results);
   } catch (error) {

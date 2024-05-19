@@ -4,6 +4,7 @@ import googlePlacesRoutes from './routes/googlePlacesRoutes';
 import geocodeRoute from './routes/geocodeRoute';
 import subRoute from './routes/subRoute';
 import recommendationsRoute from './routes/recommendationsRoute';
+import blandRoutes from "./routes/blandRoutes"; 
 import cors from 'cors';
 
 export const webpush = require('web-push');
@@ -28,6 +29,7 @@ app.use('/api/google-places', googlePlacesRoutes);
 app.use('/api/geocode', geocodeRoute);
 app.use('/api/subscription', subRoute);
 app.use('/api/recommendations', recommendationsRoute);
+app.use('/api/updateStatusCode', blandRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
