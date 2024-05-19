@@ -19,6 +19,16 @@ router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/callend', async (req: Request, res: Response) => {
+  try {
+    console.log("youve booked", req.body);
+
+    return res.status(200);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send subscription' });
+  }
+});
+
 router.get('/test/:uid', async (req: Request, res: Response) => {
   const { uid } = req.params;
   try {
