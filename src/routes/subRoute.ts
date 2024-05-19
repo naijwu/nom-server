@@ -9,11 +9,11 @@ import { getSubscriptionObjects, getUserData, setVisit, successVisit } from '../
 router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
   const { group_id } = req.params;
   try {
-    // get user data using uid
-    const userSubscriptions: any = await getSubscriptionObjects(group_id);
+    // // get user data using uid
+    // const userSubscriptions: any = await getSubscriptionObjects(group_id);
 
-    // send push to all in the group
-    // await sendGroupNotifications(userSubscriptions);
+    // // send push to all in the group
+    // await sendGroupNotifications(userSubscriptions, visitId);
 
     return res.status(200);
   } catch (error) {
