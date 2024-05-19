@@ -8,6 +8,7 @@ export const sendGroupNotifications = async (userSubscriptions: any[], visitId: 
         type: '',
         title: 'Hello!',
         body: `Vote for visit ${visitId}`,
+        visitId,
       });
 
       await webpush
