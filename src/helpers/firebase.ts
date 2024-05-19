@@ -116,7 +116,7 @@ export async function setVisit(id: string, visitData: Partial<Visit>) {
     console.log('Visit document successfully updated with ID: ', id);
   } catch (error) {
     console.error('Error updating visit document: ', error);
-    throw error; // Rethrow error to be caught by the calling function
+    throw error;
   }
 }
 
