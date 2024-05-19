@@ -108,6 +108,10 @@ export async function getVisit(id: string) {
   }
 }
 
+export async function successVisit(id: string) {
+  const vd = await getVisit(id);
+}
+
 export async function setVisit(id: string, visitData: Partial<Visit>) {
   const docRef = doc(db, 'visits', id);
 

@@ -2,7 +2,9 @@ import express, { Request, Response } from 'express';
 import { sendGroupNotifications } from '../helpers/notification';
 import { webpush } from '..';
 const router = express.Router();
-import { getSubscriptionObjects, getUserData } from '../helpers/firebase';
+import { getSubscriptionObjects, getUserData, setVisit, successVisit } from '../helpers/firebase';
+
+
 
 router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
   const { group_id } = req.params;
@@ -19,9 +21,13 @@ router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/callend', async (req: Request, res: Response) => {
+router.post('/callend/:visit_id', async (req: Request, res: Response) => {
   try {
     console.log("youve booked", req.body);
+
+    const { visit_id } = req.params;
+
+    await successVisit(visit_id);
 
     return res.status(200);
   } catch (error) {

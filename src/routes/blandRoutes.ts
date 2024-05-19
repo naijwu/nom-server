@@ -3,8 +3,9 @@ import { getVisit, setVisit } from '../helpers/firebase';
 
 const router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
-  const { visitId, statusCode } = req.body;
+router.post('/:visitId', async (req: Request, res: Response) => {
+  // const { visitId, statusCode } = req.body;
+  const { visitId } = req.params;
 
   try {
     const visitData = await getVisit(visitId); // Await the asynchronous call
@@ -15,7 +16,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     await setVisit(visitId, {
       ...visitData,
-      statusCode,
+      statusCode: 2,
     });
 
     res.json({ message: 'Visit status updated.' });
