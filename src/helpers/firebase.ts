@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, query, getFirestore, addDoc, collection, where, getDocs } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8zILnvpC6YaXhKoHNLzZATBUs2Nc-6_A',
@@ -52,6 +52,38 @@ export async function getUserPreferences(userIds: string[]): Promise<string[]> {
   const allFoods = userDataArrays.flat();
 
   return allFoods;
+}
+
+
+async function emailsToUids(emails: string[]) {
+  const listOfSubData: any = [];
+  
+  for (let i = 0; i < emails.length; i++) {
+    const q = query(collection(db, "users"), where("email", "==", emails[0]));
+  
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const user = doc.data();
+      listOfSubData.push(user.subscription);
+    });
+  }
+
+  return listOfSubData;
+
+}
+
+export async function getSubscriptionObjects(id: string) {
+  const docRef = doc(db, 'groups', id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const group = docSnap.data();
+    
+    const listOfEmails = group.users?.map((u: any) => u.email); // contains list of emails
+    const listOfSubData = await emailsToUids(listOfEmails);
+    
+    return listOfSubData;
+  }
+  return [];
 }
 
 export async function addRestaurantsToVisits(groupId: string, results: any[]) {
