@@ -63,12 +63,14 @@ const processPlacesResponse = async (response: Response) => {
           ...restPlace,
           priceLevel: priceLevels[place?.priceLevel] || -1,
           displayName: place.displayName?.text,
-          editorialSummary: place.editorialSummary?.text,
+          editorialSummary: place.editorialSummary?.text || '',
           photos: photoUris.filter((uri) => uri !== null).slice(0, 3),
         };
       })
     );
-    data.places = data.places.filter((place: any) => place.priceLevel !== -1);
+    data.places = data.places.filter(
+      (place: any) => place.priceLevel !== -1 || place.nationalPhoneNumber === undefined
+    );
   }
 
   return data;

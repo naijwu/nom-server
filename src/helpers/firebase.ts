@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, addDoc, collection } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD8zILnvpC6YaXhKoHNLzZATBUs2Nc-6_A',
@@ -10,6 +10,23 @@ const firebaseConfig = {
   appId: '1:319368335728:web:60f48f7943a4f458573fb5',
   measurementId: 'G-4LXV92DV53',
 };
+
+interface Option {
+  images: string[];
+  name: string;
+  phoneNumber: string;
+  priceLevel: number;
+  rating: number;
+  voteCount: number;
+  description?: string;
+}
+
+interface Visit {
+  date: string;
+  groupId: string;
+  options: Option[];
+  users: string[];
+}
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
@@ -35,6 +52,34 @@ export async function getUserPreferences(userIds: string[]): Promise<string[]> {
   const allFoods = userDataArrays.flat();
 
   return allFoods;
+}
+
+export async function addRestaurantsToVisits(groupId: string, results: any[]) {
+  const options: Option[] = results.map((restaurant) => ({
+    images: restaurant.photos,
+    name: restaurant.displayName,
+    phoneNumber: restaurant.nationalPhoneNumber,
+    priceLevel: restaurant.priceLevel,
+    rating: restaurant.rating,
+    voteCount: 0,
+    description: restaurant?.editorialSummary || '',
+  }));
+
+  const visitData: Visit = {
+    date: new Date().toISOString(),
+    groupId,
+    options,
+    users: [],
+  };
+
+  console.log(visitData);
+
+  try {
+    const docRef = await addDoc(collection(db, 'visits'), visitData);
+    console.log('Visit document successfully created with ID: ', docRef.id);
+  } catch (error) {
+    console.error('Error creating visit document: ', error);
+  }
 }
 
 export function getFoodRecommendations(numUsers: number, foods: string[]): string[] {

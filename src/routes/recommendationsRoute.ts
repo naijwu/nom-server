@@ -1,13 +1,13 @@
 import express, { Router, Request, Response } from 'express';
 import { textSearchPlaces, fetchPlaceMedia } from '../helpers/googlePlaces';
-import { getUserPreferences, getFoodRecommendations } from '../helpers/firebase';
+import { getUserPreferences, getFoodRecommendations, addRestaurantsToVisits } from '../helpers/firebase';
 
 const router = Router();
 
 router.use(express.json());
 
 router.post('/', async (req: Request, res: Response) => {
-  const { users, center, radius } = req.body;
+  const { groupId, users, center, radius } = req.body;
 
   const foodPreferences = await getUserPreferences(users).then((foods) => {
     const recommendations = getFoodRecommendations(users, foods);
@@ -81,6 +81,8 @@ router.post('/', async (req: Request, res: Response) => {
         place.photo = await fetchPlaceMedia(place.photo);
       }
     }
+
+    await addRestaurantsToVisits(groupId, results);
 
     res.json(results);
   } catch (error) {
