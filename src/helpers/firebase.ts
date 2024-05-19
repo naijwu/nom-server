@@ -1,20 +1,28 @@
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
-import { getFirestore, Timestamp, FieldValue, Filter } from 'firebase-admin/firestore';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore"; 
 
-const serviceAccount = require('./nomServiceKey.ts');
+const firebaseConfig = {
+  apiKey: "AIzaSyD8zILnvpC6YaXhKoHNLzZATBUs2Nc-6_A",
+  authDomain: "nomnomnomnomnomnom.firebaseapp.com",
+  projectId: "nomnomnomnomnomnom",
+  storageBucket: "nomnomnomnomnomnom.appspot.com",
+  messagingSenderId: "319368335728",
+  appId: "1:319368335728:web:60f48f7943a4f458573fb5",
+  measurementId: "G-4LXV92DV53"
+};
 
-initializeApp({
-  credential: cert(serviceAccount)
-});
-
-export const db = getFirestore();
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
 export async function getUserData(uid: string) {
-    const userRef = db.collection('users').doc(uid);
-    const doc = await userRef.get();
-    if (!doc.exists) {
-        return null;
-    } else {
-        return doc.data();
+
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data();
     }
+
+    return null
 }
