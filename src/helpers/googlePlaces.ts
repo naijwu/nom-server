@@ -33,6 +33,15 @@ const createHeaders = () => ({
     'places.displayName,places.formattedAddress,places.priceLevel,places.nationalPhoneNumber,places.rating,places.id,places.photos,places.editorialSummary',
 });
 
+export const priceLevels: { [key: string]: number } = {
+  PRICE_LEVEL_UNSPECIFIED: -1,
+  PRICE_LEVEL_FREE: 0,
+  PRICE_LEVEL_INEXPENSIVE: 1,
+  PRICE_LEVEL_MODERATE: 2,
+  PRICE_LEVEL_EXPENSIVE: 3,
+  PRICE_LEVEL_VERY_EXPENSIVE: 4,
+};
+
 const processPlacesResponse = async (response: Response) => {
   if (!response.ok) {
     const errorText = await response.text();
@@ -42,18 +51,26 @@ const processPlacesResponse = async (response: Response) => {
   const data = await response.json();
 
   if (data.places) {
-    data.places = data.places.map((place: any) => {
-      const { photos, ...restPlace } = place;
-      const photo = photos && photos.length > 0 ? `${photos[0].name}` : null;
+    data.places = await Promise.all(
+      data.places.map(async (place: any) => {
+        const { photos, ...restPlace } = place;
+        const photoNames = photos?.slice(0, 4).map((photo: any) => photo.name) || [];
+        const photoUris = await Promise.all(
+          photoNames.map((name: string) => fetchPlaceMedia(name))
+        );
 
-      return {
-        ...restPlace,
-        displayName: place.displayName?.text,
-        editorialSummary: place.editorialSummary?.text,
-        photo,
-      };
-    });
+        return {
+          ...restPlace,
+          priceLevel: priceLevels[place?.priceLevel] || -1,
+          displayName: place.displayName?.text,
+          editorialSummary: place.editorialSummary?.text,
+          photos: photoUris.filter((uri) => uri !== null).slice(0, 3),
+        };
+      })
+    );
   }
+
+  data.places = data.places.filter((place: any) => place.priceLevel !== -1);
 
   return data;
 };

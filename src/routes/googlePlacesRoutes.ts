@@ -1,5 +1,6 @@
 import express, { Router, Request, Response } from 'express';
 import { searchNearbyPlaces, textSearchPlaces, fetchPlaceMedia } from '../helpers/googlePlaces';
+import { getUserPreferences, getFoodRecommendations } from '../helpers/firebase';
 
 const router = Router();
 
@@ -26,10 +27,15 @@ router.post('/text-search', async (req: Request, res: Response) => {
 });
 
 router.get('/recommendations', async (req: Request, res: Response) => {
-  const { cuisines, center, radius } = req.body;
+  const { users, center, radius } = req.body;
 
-  if (!Array.isArray(cuisines) || cuisines.length === 0) {
-    return res.status(400).send('Cuisines array is required.');
+  const foodPreferences = await getUserPreferences(users).then((foods) => {
+    const recommendations = getFoodRecommendations(users, foods);
+    return recommendations;
+  });
+
+  if (!Array.isArray(foodPreferences) || foodPreferences.length === 0) {
+    return res.status(400).send('Food preferences array is required.');
   }
 
   if (!center || !('latitude' in center) || !('longitude' in center)) {
@@ -43,7 +49,7 @@ router.get('/recommendations', async (req: Request, res: Response) => {
   }
 
   try {
-    const searchPromises = cuisines.map((cuisine) => {
+    const searchPromises = foodPreferences.map((cuisine) => {
       const requestData = {
         textQuery: `${cuisine} restaurant`,
         center: { latitude: center.latitude, longitude: center.longitude },
