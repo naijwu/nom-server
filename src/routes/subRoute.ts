@@ -11,9 +11,14 @@ router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
 
     // send push to all in the group
     for (let i = 0; i < userSubscriptions?.length; i++) {
-      const payload = JSON.stringify({ type: '', title: 'Hello!', body: 'You have a new notification.' });
+      const subData = JSON.parse(userSubscriptions[i]);
+      const payload = JSON.stringify({
+        type: '',
+        title: 'Hello!',
+        body: 'You have a new notification.',
+      });
       webpush
-        .sendNotification(userSubscriptions[i], payload)
+        .sendNotification(subData, payload)
         .then((res: any) => console.log('Notification sent:', res))
         .catch((err: any) => console.error('Error sending notification:', err));
     }
@@ -23,7 +28,6 @@ router.get('/testgroup/:group_id', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to send subscription' });
   }
 });
-
 
 router.get('/test/:uid', async (req: Request, res: Response) => {
   const { uid } = req.params;
