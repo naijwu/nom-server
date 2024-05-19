@@ -14,8 +14,6 @@ router.get('/', async (req: Request, res: Response) => {
     return recommendations;
   });
 
-  console.log(foodPreferences);
-
   if (!Array.isArray(foodPreferences) || foodPreferences.length === 0) {
     return res.status(400).send('Food preferences array is required.');
   }

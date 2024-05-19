@@ -4,6 +4,7 @@ import googlePlacesRoutes from './routes/googlePlacesRoutes';
 import geocodeRoute from './routes/geocodeRoute';
 import subRoute from './routes/subRoute';
 import recommendationsRoute from './routes/recommendationsRoute';
+import cors from 'cors';
 
 export const webpush = require('web-push');
 const vapidKeys = {
@@ -15,6 +16,8 @@ webpush.setVapidDetails('mailto:jaewuchun@gmail.com', vapidKeys.publicKey, vapid
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(cors());
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, world!');

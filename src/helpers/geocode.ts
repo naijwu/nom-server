@@ -58,7 +58,6 @@ export const getCoordinates = async (address: string) => {
     }
 
     const data = await response.json();
-    console.log(data.results[0].geometry.location);
 
     return data.results[0].geometry.location
   } catch (error) {
